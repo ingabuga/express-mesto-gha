@@ -13,6 +13,13 @@ app.get('/', (req, res) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '5d8b8592978f8bd833ca8133',
+  };
+  next();
+});
+
 // Подключаем Mongo
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   // useNewUrlParser: true,
