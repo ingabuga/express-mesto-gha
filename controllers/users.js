@@ -21,4 +21,36 @@ const createUser = (req, res) => {
     .catch((err) => handleError(err, res));
 };
 
-module.exports = { getUsers, getUser, createUser };
+const updateProfile = (req, res) => {
+  const { name, about } = req.body;
+
+  if (!name || !about) {
+    const error = new Error('BadRequest');
+    handleError(error, res);
+    return;
+  }
+
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .orFail(() => new Error('NotFound'))
+    .then((user) => res.send({ data: user }))
+    .catch((err) => handleError(err, res));
+};
+
+const updateAvatar = (req, res) => {
+  const { avatar } = req.body;
+
+  if (!avatar) {
+    const error = new Error('BadRequest');
+    handleError(error, res);
+    return;
+  }
+
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+    .orFail(() => new Error('NotFound'))
+    .then((user) => res.send({ data: user }))
+    .catch((err) => handleError(err, res));
+};
+
+module.exports = {
+  getUsers, getUser, createUser, updateProfile, updateAvatar,
+};
