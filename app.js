@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use((req, res, next) => {
+app.use('/', (req, res, next) => {
   req.user = {
     _id: '66377b473a27d23cb67389774',
   };
