@@ -36,4 +36,8 @@ const createUser = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getUser, createUser };
+module.exports = {
+  getUsers,
+  getUser,
+  createUser,
+};
