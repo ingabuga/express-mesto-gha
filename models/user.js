@@ -1,21 +1,21 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  name: { // имя пользователя
-    type: String, // имя это строка
-    required: true, // обязательное поле
-    minlength: 2, // минимальная длина имени — 2 символа
-    maxlength: 30, // а максимальная — 30 символов
+  name: {
+    type: String,
+    required: true,
+    minlength: 2,
+    maxlength: 30,
   },
-  about: { // информация о пользователе
-    type: String, // имя — это строка
-    required: true, // обязательное поле
-    minlength: 2, // минимальная длина имени — 2 символа
-    maxlength: 30, // а максимальная — 30 символов
+  about: {
+    type: String,
+    required: true,
+    minlength: 2,
+    maxlength: 30,
   },
-  avatar: { // ссылка на аватарку
-    type: String, // строка
-    required: true, // оно должно быть у каждого пользователя, так что имя — обязательное поле
+  avatar: {
+    type: String,
+    required: true,
   },
 });
 
