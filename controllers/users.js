@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const { handleError } = require('../utils/utils');
+const { BadRequestError } = require('../error/BadRequestError');
 const { NotFoundError } = require('../error/NotFoundError');
 
 const getUsers = (req, res) => {
@@ -29,7 +30,7 @@ const updateProfile = (req, res) => {
   const { name, about } = req.body;
 
   if (!name || !about) {
-    const error = new Error('BadRequest');
+    const error = new BadRequestError();
     handleError(error, res);
     return;
   }
@@ -47,7 +48,7 @@ const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
   if (!avatar) {
-    const error = new Error('BadRequest');
+    const error = new BadRequestError();
     handleError(error, res);
     return;
   }
