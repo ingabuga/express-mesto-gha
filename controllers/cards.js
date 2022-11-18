@@ -1,5 +1,6 @@
 const Card = require('../models/card');
 const { handleError } = require('../utils/utils');
+const { NotFoundError } = require('../error/NotFoundError');
 
 const getCards = (req, res) => {
   Card.find({})
@@ -24,7 +25,10 @@ const createCard = (req, res) => {
 
 const removeCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(new Error('NotValidId'))
+    .orFail(() => {
+      const error = new NotFoundError();
+      throw error;
+    })
     .then((card) => res.send({ data: card }))
     .catch((err) => handleError(err, res));
 };
@@ -35,7 +39,10 @@ const setLike = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true, runValidators: true },
   )
-    .orFail(new Error('NotValidId'))
+    .orFail(() => {
+      const error = new NotFoundError();
+      throw error;
+    })
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
     .catch((err) => handleError(err, res));
@@ -47,7 +54,10 @@ const removeLike = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true, runValidators: true },
   )
-    .orFail(new Error('NotValidId'))
+    .orFail(() => {
+      const error = new NotFoundError();
+      throw error;
+    })
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
     .catch((err) => handleError(err, res));
