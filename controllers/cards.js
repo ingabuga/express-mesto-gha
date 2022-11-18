@@ -29,4 +29,34 @@ const removeCard = (req, res) => {
     .catch((err) => handleError(err, res));
 };
 
-module.exports = { getCards, createCard, removeCard };
+const setLike = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true, runValidators: true },
+  )
+    .orFail(new Error('NotValidId'))
+    .populate(['owner', 'likes'])
+    .then((card) => res.send({ data: card }))
+    .catch((err) => handleError(err, res));
+};
+
+const removeLike = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true, runValidators: true },
+  )
+    .orFail(new Error('NotValidId'))
+    .populate(['owner', 'likes'])
+    .then((card) => res.send({ data: card }))
+    .catch((err) => handleError(err, res));
+};
+
+module.exports = {
+  getCards,
+  createCard,
+  removeCard,
+  setLike,
+  removeLike,
+};
