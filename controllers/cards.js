@@ -86,8 +86,6 @@ const removeLike = (req, res) => {
     .catch((err) => {
       if (err.name === 'NotFoundError' || err.name === 'BadRequestError') {
         res.status(err.code).send({ message: err.message });
-      } else if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
       } else if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
       } else {
