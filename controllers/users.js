@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { handleError } = require('../utils/utils');
+// const { handleError } = require('../utils/utils');
 // const { BadRequestError } = require('../error/BadRequestError');
 const { NotFoundError } = require('../error/NotFoundError');
 const {
@@ -13,7 +13,7 @@ const {
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(OK_CODE).send({ data: users }))
-    .catch((err) => handleError(err, res));
+    .catch((err) => res.status(BAD_REQUEST_ERROR).send(err));
 };
 
 const getUser = (req, res) => {
@@ -28,8 +28,6 @@ const getUser = (req, res) => {
         res.status(err.code).send({ message: err.message });
       } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
       } else {
         res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
       }
@@ -40,7 +38,13 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => handleError(err, res));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      } else {
+        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
+      }
+    });
 };
 
 const updateProfile = (req, res) => {
@@ -52,7 +56,13 @@ const updateProfile = (req, res) => {
       throw error;
     })
     .then((user) => res.send({ data: user }))
-    .catch((err) => handleError(err, res));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      } else {
+        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
+      }
+    });
 };
 
 const updateAvatar = (req, res) => {
@@ -64,7 +74,13 @@ const updateAvatar = (req, res) => {
       throw error;
     })
     .then((user) => res.send({ data: user }))
-    .catch((err) => handleError(err, res));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      } else {
+        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
+      }
+    });
 };
 
 module.exports = {
