@@ -59,7 +59,15 @@ const setLike = (req, res) => {
     })
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(ITERNAL_SERVER_ERROR).send(err));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      } else if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      } else {
+        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
+      }
+    });
 };
 
 const removeLike = (req, res) => {
@@ -73,7 +81,15 @@ const removeLike = (req, res) => {
       throw error;
     })
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(ITERNAL_SERVER_ERROR).send(err));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      } else if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      } else {
+        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
+      }
+    });
 };
 
 module.exports = {
