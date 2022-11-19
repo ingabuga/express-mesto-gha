@@ -57,7 +57,6 @@ const setLike = (req, res) => {
       const error = new NotFoundError();
       throw error;
     })
-    .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'NotFoundError' || err.name === 'BadRequestError') {

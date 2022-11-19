@@ -1,6 +1,4 @@
 const User = require('../models/user');
-// const { handleError } = require('../utils/utils');
-// const { BadRequestError } = require('../error/BadRequestError');
 const { NotFoundError } = require('../error/NotFoundError');
 const {
   BAD_REQUEST_ERROR,
