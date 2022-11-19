@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const { handleError } = require('../utils/utils');
-const { BadRequestError } = require('../error/BadRequestError');
+// const { BadRequestError } = require('../error/BadRequestError');
 const { NotFoundError } = require('../error/NotFoundError');
 
 const getUsers = (req, res) => {
@@ -29,12 +29,6 @@ const createUser = (req, res) => {
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
 
-  if (!name || !about) {
-    const error = new BadRequestError();
-    handleError(error, res);
-    return;
-  }
-
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(() => {
       const error = new NotFoundError();
@@ -46,12 +40,6 @@ const updateProfile = (req, res) => {
 
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
-
-  if (!avatar) {
-    const error = new BadRequestError();
-    handleError(error, res);
-    return;
-  }
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(() => {
