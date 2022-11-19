@@ -9,26 +9,19 @@ const {
   ITERNAL_SERVER_MESSAGE,
 } = require('../utils/constants');
 
+// const getCards = (req, res) => {
+//   Card.find({})
+//     .populate(['owner', 'likes'])
+//     .then((cards) => res.send({ data: cards }))
+//     .catch((err) => handleError(err, res));
+// };
+
 const getCards = (req, res) => {
   Card.find({})
     .populate(['owner', 'likes'])
-    .then((cards) => res.send({ data: cards }))
-    .catch((err) => handleError(err, res));
+    .then((cards) => res.status(OK_CODE).send({ data: cards }))
+    .catch((err) => res.status(BAD_REQUEST_ERROR).send(err));
 };
-
-// const createCard = (req, res) => {
-//   const { name, link } = req.body;
-//   Card.create({ name, link, owner: req.user._id }, (err, newCard) => {
-//     if (err) {
-//       handleError(err, res);
-//       return;
-//     }
-//     Card.findById(newCard._id)
-//       .populate(['owner', 'likes'])
-//       .then((card) => res.send({ data: card }))
-//       .catch((evt) => handleError(evt, res)); //
-//   });
-// };
 
 const createCard = (req, res) => {
   const { name, link } = req.body;
@@ -36,10 +29,8 @@ const createCard = (req, res) => {
     .then((card) => res.status(OK_CODE).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        console.error(err.name, '=', err.message);
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
       } else {
-        console.error('err =', err.message);
         res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
       }
     });
