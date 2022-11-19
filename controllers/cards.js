@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { handleError } = require('../utils/utils');
+// const { handleError } = require('../utils/utils');
 const { NotFoundError } = require('../error/NotFoundError');
 const {
   BAD_REQUEST_ERROR,
@@ -59,7 +59,7 @@ const setLike = (req, res) => {
     })
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
-    .catch((err) => handleError(err, res));
+    .catch((err) => res.status(ITERNAL_SERVER_ERROR).send(err));
 };
 
 const removeLike = (req, res) => {
@@ -73,7 +73,7 @@ const removeLike = (req, res) => {
       throw error;
     })
     .then((card) => res.send({ data: card }))
-    .catch((err) => handleError(err, res));
+    .catch((err) => res.status(ITERNAL_SERVER_ERROR).send(err));
 };
 
 module.exports = {
