@@ -2,10 +2,17 @@ const User = require('../models/user');
 const { handleError } = require('../utils/utils');
 // const { BadRequestError } = require('../error/BadRequestError');
 const { NotFoundError } = require('../error/NotFoundError');
+const {
+  BAD_REQUEST_ERROR,
+  ITERNAL_SERVER_ERROR,
+  BAD_REQUEST_MESSAGE,
+  OK_CODE,
+  ITERNAL_SERVER_MESSAGE,
+} = require('../utils/constants');
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.status(OK_CODE).send({ data: users }))
     .catch((err) => handleError(err, res));
 };
 
@@ -16,7 +23,17 @@ const getUser = (req, res) => {
       throw error;
     })
     .then((user) => res.send({ data: user }))
-    .catch((err) => handleError(err, res));
+    .catch((err) => {
+      if (err.name === 'NotFoundError' || err.name === 'BadRequestError') {
+        res.status(err.code).send({ message: err.message });
+      } else if (err.name === 'CastError') {
+        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      } else if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      } else {
+        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
+      }
+    });
 };
 
 const createUser = (req, res) => {

@@ -26,9 +26,6 @@ const createCard = (req, res) => {
       } else {
         res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
       }
-      // Card.findById(newCard._id)
-      //   .then((card) => res.send({ data: card }))
-      //   .catch((evt) => handleError(evt, res));
     });
 };
 
