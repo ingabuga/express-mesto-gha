@@ -72,7 +72,6 @@ const removeLike = (req, res) => {
       const error = new NotFoundError();
       throw error;
     })
-    .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
     .catch((err) => handleError(err, res));
 };
