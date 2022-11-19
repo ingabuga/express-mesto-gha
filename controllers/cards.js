@@ -37,7 +37,9 @@ const removeCard = (req, res) => {
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'NotFoundError' || err.name === 'BadRequestError') {
+        res.status(err.code).send({ message: err.message });
+      } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
       } else if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
