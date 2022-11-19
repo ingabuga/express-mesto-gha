@@ -5,6 +5,8 @@ const {
   BAD_REQUEST_ERROR,
   ITERNAL_SERVER_ERROR,
   BAD_REQUEST_MESSAGE,
+  PAGE_NOT_FOUND_ERROR,
+  PAGE_NOT_FOUND_MESSAGE,
   OK_CODE,
   ITERNAL_SERVER_MESSAGE,
 } = require('../utils/constants');
@@ -60,10 +62,8 @@ const setLike = (req, res) => {
     .populate(['owner', 'likes'])
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      if (err.name === 'ValidationError') {
+        res.status(PAGE_NOT_FOUND_ERROR).send({ message: PAGE_NOT_FOUND_MESSAGE });
       } else {
         res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
       }
@@ -82,10 +82,8 @@ const removeLike = (req, res) => {
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      if (err.name === 'ValidationError') {
+        res.status(PAGE_NOT_FOUND_ERROR).send({ message: PAGE_NOT_FOUND_MESSAGE });
       } else {
         res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
       }
