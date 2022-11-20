@@ -1,5 +1,4 @@
 const Card = require('../models/card');
-// const { handleError } = require('../utils/utils');
 const { NotFoundError } = require('../error/NotFoundError');
 const {
   BAD_REQUEST_ERROR,
