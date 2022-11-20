@@ -28,7 +28,7 @@ const getUser = (req, res) => {
     })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'NotFoundError' || err.name === 'BadRequestError') {
+      if (err.name === 'NotFoundError') {
         res.status(err.code).send({ message: err.message });
       } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
@@ -61,7 +61,9 @@ const updateProfile = (req, res) => {
     })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'NotFoundError') {
+        res.status(err.code).send({ message: err.message });
+      } else if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
       } else {
         res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
