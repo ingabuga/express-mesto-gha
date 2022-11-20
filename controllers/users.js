@@ -11,7 +11,13 @@ const {
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(OK_CODE).send({ data: users }))
-    .catch((err) => res.status(BAD_REQUEST_ERROR).send(err));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      } else {
+        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
+      }
+    });
 };
 
 const getUser = (req, res) => {
