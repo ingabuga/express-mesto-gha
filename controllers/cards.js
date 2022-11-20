@@ -64,7 +64,7 @@ const setLike = (req, res) => {
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'NotFoundError' || err.name === 'BadRequestError') {
+      if (err.name === 'NotFoundError') {
         res.status(err.code).send({ message: err.message });
       } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
@@ -86,7 +86,7 @@ const removeLike = (req, res) => {
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'NotFoundError' || err.name === 'BadRequestError') {
+      if (err.name === 'NotFoundError') {
         res.status(err.code).send({ message: err.message });
       } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
