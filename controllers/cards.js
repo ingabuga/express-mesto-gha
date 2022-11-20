@@ -12,6 +12,13 @@ const {
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.status(OK_CODE).send({ data: cards }))
+    .catch(() => res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE }));
+};
+
+const createCard = (req, res) => {
+  const { name, link } = req.body;
+  Card.create({ name, link, owner: req.user._id })
+    .then((card) => res.status(OK_CODE).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
@@ -19,13 +26,6 @@ const getCards = (req, res) => {
         res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
       }
     });
-};
-
-const createCard = (req, res) => {
-  const { name, link } = req.body;
-  Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(OK_CODE).send({ data: card }))
-    .catch(() => res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE }));
 };
 
 const removeCard = (req, res) => {
