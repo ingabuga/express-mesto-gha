@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { NotFoundError } = require('../error/NotFoundError');
 const {
@@ -32,17 +33,29 @@ const getUser = (req, res) => {
     });
 };
 
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else {
-        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
-      }
-    });
+const createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
+    .then((user) => res.status(201).send({
+      data: {
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      },
+    }))
+    .catch(next);
 };
 
 const updateProfile = (req, res) => {
@@ -84,5 +97,9 @@ const updateAvatar = (req, res) => {
 };
 
 module.exports = {
-  getUsers, getUser, createUser, updateProfile, updateAvatar,
+  getUsers,
+  getUser,
+  createUser,
+  updateProfile,
+  updateAvatar,
 };
