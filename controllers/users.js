@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { NotFoundError } = require('../error/NotFoundError');
 const {
@@ -13,6 +14,10 @@ const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(OK_CODE).send({ data: users }))
     .catch(() => res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE }));
+};
+
+const getCurrentUser = (req, res, next) => {
+  User.findUserById(req.user._id, res, next);
 };
 
 const getUser = (req, res) => {
@@ -58,47 +63,44 @@ const createUser = (req, res, next) => {
     .catch(next);
 };
 
-const updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
-
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .orFail(() => {
-      const error = new NotFoundError();
-      throw error;
-    })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        res.status(err.code).send({ message: err.message });
-      } else if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else {
-        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
-      }
-    });
+  User.updateUserData(req.user._id, res, next, { name, about });
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
+  User.updateUserData(req.user._id, res, next, { avatar });
+};
 
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .orFail(() => {
-      const error = new NotFoundError();
-      throw error;
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findUserByCredentials(email, password, next)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.cookie('jwt', token, { httpOnly: true }).send({
+        data: {
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+          _id: user._id,
+        },
+      });
     })
-    .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else {
-        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
-      }
+      res
+        .status(401)
+        .send({ message: err.message });
     });
 };
 
 module.exports = {
+  login,
   getUsers,
   getUser,
+  getCurrentUser,
   createUser,
   updateProfile,
   updateAvatar,
