@@ -4,23 +4,29 @@ const validator = require('validator');
 const DataAccessError = require('../errors/DataAccessError');
 const NotFoundError = require('../errors/NotFoundError');
 
+const {
+  DEFAULT_USER_NAME,
+  DEFAULT_USER_ABOUT,
+  DEFAULT_AVATAR_LINK,
+} = require('../utils/constants');
+
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      default: 'Жак-Ив Кусто',
+      default: DEFAULT_USER_NAME,
       minlength: 2,
       maxlength: 30,
     },
     about: {
       type: String,
-      default: 'Исследователь',
+      default: DEFAULT_USER_ABOUT,
       minlength: 2,
       maxlength: 30,
     },
     avatar: {
       type: String,
-      default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+      default: DEFAULT_AVATAR_LINK,
     },
     email: {
       type: String,
@@ -28,7 +34,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
       validate: {
         validator: (email) => validator.isEmail(email),
-        message: 'Неверный формат ссылки',
       },
     },
     password: {

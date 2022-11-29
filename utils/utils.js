@@ -8,6 +8,10 @@ const {
   EMAIL_CONFLICT_MESSAGE,
 } = require('./constants');
 
+function handleLog(err) {
+  console.log(err.message);
+}
+
 const handleError = (err, res) => {
   if (err instanceof CustomError) {
     err.sendError(res);
@@ -18,6 +22,7 @@ const handleError = (err, res) => {
   } else if (err.code === 11000) {
     res.status(EMAIL_CONFLICT_CODE).send({ message: EMAIL_CONFLICT_MESSAGE });
   } else {
+    handleLog(err);
     res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
   }
 };
