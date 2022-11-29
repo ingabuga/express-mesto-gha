@@ -1,6 +1,6 @@
 const CustomError = require('../errors/CustomError');
 const {
-  BAD_REQUEST_CODE,
+  BAD_REQUEST_ERROR,
   DEFAULT_ERROR_CODE,
   EMAIL_CONFLICT_CODE,
   BAD_REQUEST_MESSAGE,
@@ -16,9 +16,9 @@ const handleError = (err, res) => {
   if (err instanceof CustomError) {
     err.sendError(res);
   } else if (err.name === 'ValidationError') {
-    res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST_MESSAGE });
+    res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
   } else if (err.name === 'CastError') {
-    res.status(BAD_REQUEST_CODE).send({ message: BAD_REQUEST_MESSAGE });
+    res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
   } else if (err.code === 11000) {
     res.status(EMAIL_CONFLICT_CODE).send({ message: EMAIL_CONFLICT_MESSAGE });
   } else {

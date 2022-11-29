@@ -7,7 +7,7 @@ const {
   setCardLike,
   setCardDislike,
 } = require('../controllers/cards');
-const { LINK_REG_EXP } = require('../utils/constants');
+const { REG_EXP } = require('../utils/constants');
 
 router.get('/', getCards);
 router.post(
@@ -20,7 +20,7 @@ router.post(
         .required(),
       link: Joi.string()
         .required()
-        .pattern(LINK_REG_EXP),
+        .pattern(REG_EXP),
     }),
   }),
   createCard,

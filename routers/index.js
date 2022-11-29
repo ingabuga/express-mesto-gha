@@ -3,7 +3,7 @@ const router = require('express').Router();
 const NotFoundError = require('../errors/NotFoundError');
 const { login, createUser } = require('../controllers/users');
 const auth = require('../middlewares/auth');
-const { LINK_REG_EXP } = require('../utils/constants');
+const { REG_EXP } = require('../utils/constants');
 
 router.post(
   '/signin',
@@ -29,7 +29,7 @@ router.post(
         .min(2)
         .max(30),
       avatar: Joi.string()
-        .pattern(LINK_REG_EXP),
+        .pattern(REG_EXP),
       email: Joi.string()
         .email()
         .required(),
