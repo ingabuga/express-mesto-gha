@@ -41,7 +41,6 @@ const cardSchema = new mongoose.Schema(
           .orFail(() => {
             throw new NotFoundError();
           })
-          .populate(['owner', 'likes'])
           .then((card) => res.send({ data: card }))
           .catch(next);
       },

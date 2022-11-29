@@ -9,15 +9,12 @@ module.exports = (req, res, next) => {
     next(new DataAccessError(AUTH_MESSAGE));
     return;
   }
-
   let payload;
-
   try {
     payload = jwt.verify(token, 'some-secret-key');
   } catch (err) {
     next(new DataAccessError(AUTH_MESSAGE));
   }
-
   req.user = payload;
   next();
 };

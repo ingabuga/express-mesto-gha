@@ -1,6 +1,5 @@
 const {
-  UNAUTHORIZED_ERROR,
-  UNAUTHORIZED_MESSAGE,
+  UNAUTHORIZED_ERROR, UNAUTHORIZED_MESSAGE,
 } = require('../utils/constants');
 const CustomError = require('./CustomError');
 

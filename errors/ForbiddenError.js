@@ -1,6 +1,5 @@
 const {
-  FORBIDDEN_ERROR,
-  FORBIDDEN_MESSAGE,
+  FORBIDDEN_ERROR, FORBIDDEN_MESSAGE,
 } = require('../utils/constants');
 const CustomError = require('./CustomError');
 
