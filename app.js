@@ -1,12 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const { login, createUser } = require('./controllers/users');
-const { PAGE_NOT_FOUND_ERROR, PAGE_NOT_FOUND_MESSAGE } = require('./utils/constants');
+const { handleError } = require('./utils/utils');
 
 const { PORT = 3000 } = process.env;
 const app = express();
-
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -24,8 +25,9 @@ app.post('/signup', createUser);
 app.use('/users', require('./routers/users'));
 app.use('/cards', require('./routers/cards'));
 
-app.use((req, res) => {
-  res.status(PAGE_NOT_FOUND_ERROR).send({ message: PAGE_NOT_FOUND_MESSAGE });
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  handleError(err, res);
 });
 
 app.listen(PORT, () => {
