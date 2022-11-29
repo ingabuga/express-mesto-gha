@@ -13,6 +13,7 @@ const EMAIL_CONFLICT_MESSAGE = 'Такой email уже зарегистриро
 const FORBIDDEN_MESSAGE = 'Ошибка доступа';
 const DEFAULT_ERROR_MESSAGE = 'Произошла ошибка';
 const REG_EXP = /^https?:\/\/(www\.)?[\w\d@:%~#=.+-/]+$/;
+const SECRET_KEY = 'some-secret-key';
 
 module.exports = {
   BAD_REQUEST_CODE,
@@ -30,4 +31,5 @@ module.exports = {
   FORBIDDEN_MESSAGE,
   DEFAULT_ERROR_MESSAGE,
   REG_EXP,
+  SECRET_KEY,
 };
