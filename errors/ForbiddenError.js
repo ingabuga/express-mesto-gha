@@ -1,5 +1,5 @@
 const {
-  FORBIDDEN_CODE,
+  FORBIDDEN_ERROR,
   FORBIDDEN_MESSAGE,
 } = require('../utils/constants');
 const CustomError = require('./CustomError');
@@ -9,7 +9,7 @@ class ForbiddenError extends CustomError {
     super();
     this.name = 'ForbiddenError';
     this.message = FORBIDDEN_MESSAGE;
-    this.code = FORBIDDEN_CODE;
+    this.code = FORBIDDEN_ERROR;
   }
 }
 

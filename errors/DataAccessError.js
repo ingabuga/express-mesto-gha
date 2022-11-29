@@ -1,15 +1,15 @@
 const {
-  WRONG_LOGIN_CODE,
-  WRONG_LOGIN_MESSAGE,
+  UNAUTHORIZED_ERROR,
+  UNAUTHORIZED_MESSAGE,
 } = require('../utils/constants');
 const CustomError = require('./CustomError');
 
 class DataAccessError extends CustomError {
-  constructor(message = WRONG_LOGIN_MESSAGE) {
+  constructor(message = UNAUTHORIZED_MESSAGE) {
     super(message);
     this.name = 'DataAccessError';
     this.message = message;
-    this.code = WRONG_LOGIN_CODE;
+    this.code = UNAUTHORIZED_ERROR;
   }
 }
 

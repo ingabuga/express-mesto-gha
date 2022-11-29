@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { CREATED_CODE } = require('../utils/constants');
+const { CREATED_ERROR } = require('../utils/constants');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -53,7 +53,7 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(CREATED_CODE).send({
+    .then((user) => res.status(CREATED_ERROR).send({
       data: {
         name: user.name,
         about: user.about,

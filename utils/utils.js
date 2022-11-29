@@ -1,11 +1,11 @@
 const CustomError = require('../errors/CustomError');
 const {
   BAD_REQUEST_ERROR,
-  DEFAULT_ERROR_CODE,
-  EMAIL_CONFLICT_CODE,
   BAD_REQUEST_MESSAGE,
-  DEFAULT_ERROR_MESSAGE,
-  EMAIL_CONFLICT_MESSAGE,
+  ITERNAL_SERVER_ERROR,
+  ITERNAL_SERVER_MESSAGE,
+  EMAIL_ERROR,
+  EMAIL_MESSAGE,
 } = require('./constants');
 
 function handleLog(err) {
@@ -20,10 +20,10 @@ const handleError = (err, res) => {
   } else if (err.name === 'CastError') {
     res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
   } else if (err.code === 11000) {
-    res.status(EMAIL_CONFLICT_CODE).send({ message: EMAIL_CONFLICT_MESSAGE });
+    res.status(EMAIL_ERROR).send({ message: EMAIL_MESSAGE });
   } else {
     handleLog(err);
-    res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
+    res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
   }
 };
 

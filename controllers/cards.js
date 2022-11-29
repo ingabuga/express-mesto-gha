@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
-const { CREATED_CODE } = require('../utils/constants');
+const { CREATED_ERROR } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -18,7 +18,7 @@ const createCard = (req, res, next) => {
       return;
     }
     Card.findById(newCard._id)
-      .then((card) => res.status(CREATED_CODE).send({ data: card }))
+      .then((card) => res.status(CREATED_ERROR).send({ data: card }))
       .catch(next);
   });
 };
