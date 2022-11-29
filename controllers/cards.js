@@ -5,7 +5,6 @@ const { CREATED_CODE } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .populate(['owner', 'likes'])
     .then((cards) => res.send({ data: cards }))
     .catch(next);
 };
@@ -19,7 +18,6 @@ const createCard = (req, res, next) => {
       return;
     }
     Card.findById(newCard._id)
-      .populate(['owner', 'likes'])
       .then((card) => res.status(CREATED_CODE).send({ data: card }))
       .catch(next);
   });
