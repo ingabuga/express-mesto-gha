@@ -3,25 +3,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { CREATED_ERROR } = require('../utils/constants');
 
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  User.findUserByCredentials(email, password, next)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', token, { httpOnly: true }).send({
-        data: {
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
-          _id: user._id,
-        },
-      });
-    })
-    .catch(next);
-};
-
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
@@ -32,7 +13,7 @@ const getCurrentUser = (req, res, next) => {
   User.findUserById(req.user._id, res, next);
 };
 
-const findUser = (req, res, next) => {
+const getUser = (req, res, next) => {
   User.findUserById(req.params.userId, res, next);
 };
 
@@ -75,10 +56,29 @@ const updateAvatar = (req, res, next) => {
   User.updateUserData(req.user._id, res, next, { avatar });
 };
 
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findUserByCredentials(email, password, next)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.cookie('jwt', token, { httpOnly: true }).send({
+        data: {
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+          _id: user._id,
+        },
+      });
+    })
+    .catch(next);
+};
+
 module.exports = {
   login,
   getUsers,
-  findUser,
+  getUser,
   createUser,
   updateProfile,
   updateAvatar,

@@ -3,7 +3,7 @@ const { celebrate, Joi } = require('celebrate');
 const {
   getCurrentUser,
   getUsers,
-  findUser,
+  getUser,
   updateProfile,
   updateAvatar,
 } = require('../controllers/users');
@@ -18,7 +18,7 @@ router.get(
       userId: Joi.string().alphanum().length(24),
     }),
   }),
-  findUser,
+  getUser,
 );
 router.patch(
   '/me',
