@@ -1,42 +1,44 @@
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const NotFoundError = require('../error/NotFoundError');
-const DataError = require('../error/DataError');
+const DataAccessError = require('../errors/DataAccessError');
+const NotFoundError = require('../errors/NotFoundError');
+
+const {
+  DEFAULT_USER_NAME,
+  DEFAULT_USER_ABOUT,
+  DEFAULT_AVATAR_LINK,
+} = require('../utils/constants');
 
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
-      deafault: 'Жак Ив Кусто',
+      default: DEFAULT_USER_NAME,
       minlength: 2,
       maxlength: 30,
     },
     about: {
       type: String,
-      required: true,
-      deafault: 'Исследователь океана',
+      default: DEFAULT_USER_ABOUT,
       minlength: 2,
       maxlength: 30,
     },
     avatar: {
       type: String,
-      deafault: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-      required: true,
+      default: DEFAULT_AVATAR_LINK,
     },
     email: {
       type: String,
-      unique: true,
       required: true,
+      unique: true,
       validate: {
-        validator: (v) => validator.isEmail(v),
+        validator: (email) => validator.isEmail(email),
       },
     },
     password: {
       type: String,
       required: true,
-      minlength: 8,
       select: false,
     },
   },
@@ -45,12 +47,12 @@ const userSchema = new mongoose.Schema(
       findUserByCredentials(email, password) {
         return this.findOne({ email }).select('+password')
           .orFail(() => {
-            throw new DataError();
+            throw new DataAccessError();
           })
           .then((user) => bcrypt.compare(password, user.password)
             .then((matched) => {
               if (!matched) {
-                throw new DataError();
+                throw new DataAccessError();
               }
               return user;
             }));

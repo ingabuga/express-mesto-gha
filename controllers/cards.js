@@ -1,62 +1,59 @@
 const Card = require('../models/card');
-const { NotFoundError } = require('../error/NotFoundError');
-const {
-  BAD_REQUEST_ERROR,
-  ITERNAL_SERVER_ERROR,
-  BAD_REQUEST_MESSAGE,
-  OK_CODE,
-  ITERNAL_SERVER_MESSAGE,
-} = require('../utils/constants');
+const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
+const { CREATED_CODE } = require('../utils/constants');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.status(OK_CODE).send({ data: cards }))
-    .catch(() => res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE }));
+    .populate(['owner', 'likes'])
+    .then((cards) => res.send({ data: cards }))
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(OK_CODE).send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else {
-        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
-      }
-    });
+
+  Card.create({ name, link, owner: req.user._id }, (err, newCard) => {
+    if (err) {
+      next(err);
+      return;
+    }
+    Card.findById(newCard._id)
+      .populate(['owner', 'likes'])
+      .then((card) => res.status(CREATED_CODE).send({ data: card }))
+      .catch(next);
+  });
 };
 
-const removeCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+const deleteCard = (req, res, next) => {
+  Card.findById(req.params.cardId)
     .orFail(() => {
-      const error = new NotFoundError();
-      throw error;
+      throw new NotFoundError();
     })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        res.status(err.code).send({ message: err.message });
-      } else if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+    .then((card) => {
+      const isOwn = card.owner.toString() === req.user._id;
+      if (isOwn) {
+        card.remove();
+        res.send({ data: card });
       } else {
-        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
+        throw new ForbiddenError();
       }
-    });
+    })
+    .catch(next);
 };
 
-const setLike = (req, res, next) => {
-  Card.handleLike(req, res, next, '$addToSet');
+const setCardLike = (req, res, next) => {
+  Card.handleLikeToggle(req, res, next, '$addToSet');
 };
 
-const removeLike = (req, res, next) => {
-  Card.handleLike(req, res, next, '$pull');
+const setCardDislike = (req, res, next) => {
+  Card.handleLikeToggle(req, res, next, '$pull');
 };
 
 module.exports = {
   getCards,
   createCard,
-  removeCard,
-  setLike,
-  removeLike,
+  deleteCard,
+  setCardLike,
+  setCardDislike,
 };

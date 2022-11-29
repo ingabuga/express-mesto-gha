@@ -1,26 +1,21 @@
 const jwt = require('jsonwebtoken');
-const { UNAUTHORIZED_ERROR, AUTH_MESSAGE } = require('../utils/constants');
+const DataAccessError = require('../errors/DataAccessError');
+const { NEED_AUTH_MESSAGE, SECRET_KEY } = require('../utils/constants');
 
-// eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
+  const token = req.cookies.jwt;
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return res
-      .status(UNAUTHORIZED_ERROR)
-      .send({ AUTH_MESSAGE });
+  if (!token) {
+    next(new DataAccessError(NEED_AUTH_MESSAGE));
+    return;
   }
-
-  const token = authorization.replace('Bearer ', '');
 
   let payload;
 
   try {
-    payload = jwt.verify(token, 'some-secret-key');
+    payload = jwt.verify(token, SECRET_KEY);
   } catch (err) {
-    return res
-      .status(UNAUTHORIZED_ERROR)
-      .send({ AUTH_MESSAGE });
+    next(new DataAccessError(NEED_AUTH_MESSAGE));
   }
 
   req.user = payload;

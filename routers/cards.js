@@ -1,14 +1,13 @@
-const { celebrate, Joi } = require('celebrate');
 const router = require('express').Router();
-const { REG_EXP } = require('../utils/constants');
-
+const { celebrate, Joi } = require('celebrate');
 const {
   getCards,
   createCard,
-  removeCard,
-  setLike,
-  removeLike,
+  deleteCard,
+  setCardLike,
+  setCardDislike,
 } = require('../controllers/cards');
+const { LINK_REG_EXP } = require('../utils/constants');
 
 router.get('/', getCards);
 router.post(
@@ -21,7 +20,7 @@ router.post(
         .required(),
       link: Joi.string()
         .required()
-        .pattern(REG_EXP),
+        .pattern(LINK_REG_EXP),
     }),
   }),
   createCard,
@@ -33,7 +32,7 @@ router.delete(
       cardId: Joi.string().alphanum().length(24),
     }),
   }),
-  removeCard,
+  deleteCard,
 );
 router.put(
   '/:cardId/likes',
@@ -42,7 +41,7 @@ router.put(
       cardId: Joi.string().alphanum().length(24),
     }),
   }),
-  setLike,
+  setCardLike,
 );
 router.delete(
   '/:cardId/likes',
@@ -51,7 +50,7 @@ router.delete(
       cardId: Joi.string().alphanum().length(24),
     }),
   }),
-  removeLike,
+  setCardDislike,
 );
 
 module.exports = router;
