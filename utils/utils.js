@@ -15,9 +15,9 @@ function handleLog(err) {
 const handleError = (err, res) => {
   if (err instanceof CustomError) {
     err.sendError(res);
-  } else if (err.name === 'ValidationError') {
-    res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
   } else if (err.name === 'CastError') {
+    res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+  } else if (err.name === 'ValidationError') {
     res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
   } else if (err.code === 11000) {
     res.status(EMAIL_ERROR).send({ message: EMAIL_MESSAGE });

@@ -1,16 +1,11 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const {
-  getCurrentUser,
-  getUsers,
-  findUser,
-  updateProfile,
-  updateAvatar,
+  getUsers, getCurrentUser, getUser, updateProfile, updateAvatar,
 } = require('../controllers/users');
 const { REG_EXP } = require('../utils/constants');
 
 router.get('/', getUsers);
-router.get('/me', getCurrentUser);
 router.get(
   '/:userId',
   celebrate({
@@ -18,7 +13,18 @@ router.get(
       userId: Joi.string().alphanum().length(24),
     }),
   }),
-  findUser,
+  getUser,
+);
+router.patch(
+  '/me/avatar',
+  celebrate({
+    body: Joi.object().keys({
+      avatar: Joi.string()
+        .required()
+        .pattern(REG_EXP),
+    }),
+  }),
+  updateAvatar,
 );
 router.patch(
   '/me',
@@ -36,16 +42,7 @@ router.patch(
   }),
   updateProfile,
 );
-router.patch(
-  '/me/avatar',
-  celebrate({
-    body: Joi.object().keys({
-      avatar: Joi.string()
-        .required()
-        .pattern(REG_EXP),
-    }),
-  }),
-  updateAvatar,
-);
+
+router.get('/me', getCurrentUser);
 
 module.exports = router;

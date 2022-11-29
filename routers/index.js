@@ -1,9 +1,9 @@
-const { celebrate, Joi, errors } = require('celebrate');
 const router = require('express').Router();
-const NotFoundError = require('../errors/NotFoundError');
+const { celebrate, Joi, errors } = require('celebrate');
 const { login, createUser } = require('../controllers/users');
 const auth = require('../middlewares/auth');
 const { REG_EXP } = require('../utils/constants');
+const NotFoundError = require('../errors/NotFoundError');
 
 router.post(
   '/signin',

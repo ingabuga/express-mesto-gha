@@ -3,7 +3,7 @@ const { celebrate, Joi } = require('celebrate');
 const {
   getCards,
   createCard,
-  deleteCard,
+  removeCard,
   setCardLike,
   setCardDislike,
 } = require('../controllers/cards');
@@ -32,7 +32,7 @@ router.delete(
       cardId: Joi.string().alphanum().length(24),
     }),
   }),
-  deleteCard,
+  removeCard,
 );
 router.put(
   '/:cardId/likes',

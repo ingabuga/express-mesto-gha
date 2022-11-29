@@ -4,11 +4,9 @@ const cookieParser = require('cookie-parser');
 const { handleError } = require('./utils/utils');
 
 const { PORT = 3000 } = process.env;
-
 const app = express();
 
 app.use(cookieParser());
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
