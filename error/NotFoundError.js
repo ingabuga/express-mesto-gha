@@ -1,6 +1,7 @@
 const { PAGE_NOT_FOUND_ERROR, PAGE_NOT_FOUND_MESSAGE } = require('../utils/constants');
+const CustomError = require('./CustomError');
 
-class NotFoundError extends Error {
+class NotFoundError extends CustomError {
   constructor() {
     super();
     this.name = 'NotFoundError';

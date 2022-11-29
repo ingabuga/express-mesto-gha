@@ -45,48 +45,12 @@ const removeCard = (req, res) => {
     });
 };
 
-const setLike = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true, runValidators: true },
-  )
-    .orFail(() => {
-      const error = new NotFoundError();
-      throw error;
-    })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        res.status(err.code).send({ message: err.message });
-      } else if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else {
-        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
-      }
-    });
+const setLike = (req, res, next) => {
+  Card.handleLike(req, res, next, '$addToSet');
 };
 
-const removeLike = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true, runValidators: true },
-  )
-    .orFail(() => {
-      const error = new NotFoundError();
-      throw error;
-    })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        res.status(err.code).send({ message: err.message });
-      } else if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else {
-        res.status(ITERNAL_SERVER_ERROR).send({ message: ITERNAL_SERVER_MESSAGE });
-      }
-    });
+const removeLike = (req, res, next) => {
+  Card.handleLike(req, res, next, '$pull');
 };
 
 module.exports = {
