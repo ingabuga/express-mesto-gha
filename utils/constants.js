@@ -26,15 +26,13 @@ const FORBIDDEN_MESSAGE = 'Ошибка доступа';
 
 const DEFAULT_ERROR_MESSAGE = 'Произошла ошибка';
 
-const DEFAULT_USER_NAME = 'Жак-Ив Кусто';
+// const DEFAULT_USER_NAME = 'Жак-Ив Кусто';
 
-const DEFAULT_USER_ABOUT = 'Исследователь';
+// const DEFAULT_USER_ABOUT = 'Исследователь';
 
-const DEFAULT_AVATAR_LINK = 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png';
+// const DEFAULT_AVATAR_LINK = 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png';
 
 const LINK_REG_EXP = /^https?:\/\/(www\.)?[\w\d@:%~#=.+-/]+$/;
-
-const SECRET_KEY = 'some-secret-key';
 
 module.exports = {
   BAD_REQUEST_CODE,
@@ -51,9 +49,8 @@ module.exports = {
   EMAIL_CONFLICT_MESSAGE,
   FORBIDDEN_MESSAGE,
   DEFAULT_ERROR_MESSAGE,
-  DEFAULT_USER_NAME,
-  DEFAULT_USER_ABOUT,
-  DEFAULT_AVATAR_LINK,
+  // DEFAULT_USER_NAME,
+  // DEFAULT_USER_ABOUT,
+  // DEFAULT_AVATAR_LINK,
   LINK_REG_EXP,
-  SECRET_KEY,
 };

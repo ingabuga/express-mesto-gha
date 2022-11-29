@@ -4,29 +4,23 @@ const validator = require('validator');
 const DataAccessError = require('../errors/DataAccessError');
 const NotFoundError = require('../errors/NotFoundError');
 
-const {
-  DEFAULT_USER_NAME,
-  DEFAULT_USER_ABOUT,
-  DEFAULT_AVATAR_LINK,
-} = require('../utils/constants');
-
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      default: DEFAULT_USER_NAME,
+      default: 'Жак-Ив Кусто',
       minlength: 2,
       maxlength: 30,
     },
     about: {
       type: String,
-      default: DEFAULT_USER_ABOUT,
+      default: 'Исследователь',
       minlength: 2,
       maxlength: 30,
     },
     avatar: {
       type: String,
-      default: DEFAULT_AVATAR_LINK,
+      default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     },
     email: {
       type: String,
