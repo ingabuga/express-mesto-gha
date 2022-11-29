@@ -23,7 +23,7 @@ const createCard = (req, res, next) => {
   });
 };
 
-const deleteCard = (req, res, next) => {
+const removeCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
       throw new NotFoundError();
@@ -40,18 +40,18 @@ const deleteCard = (req, res, next) => {
     .catch(next);
 };
 
-const setCardLike = (req, res, next) => {
+const likeCard = (req, res, next) => {
   Card.handleLikeToggle(req, res, next, '$addToSet');
 };
 
-const setCardDislike = (req, res, next) => {
+const dislikeCard = (req, res, next) => {
   Card.handleLikeToggle(req, res, next, '$pull');
 };
 
 module.exports = {
   getCards,
   createCard,
-  deleteCard,
-  setCardLike,
-  setCardDislike,
+  removeCard,
+  likeCard,
+  dislikeCard,
 };

@@ -3,9 +3,9 @@ const { celebrate, Joi } = require('celebrate');
 const {
   getCards,
   createCard,
-  deleteCard,
-  setCardLike,
-  setCardDislike,
+  removeCard,
+  likeCard,
+  dislikeCard,
 } = require('../controllers/cards');
 const { REG_EXP } = require('../utils/constants');
 
@@ -32,7 +32,7 @@ router.delete(
       cardId: Joi.string().alphanum().length(24),
     }),
   }),
-  deleteCard,
+  removeCard,
 );
 router.put(
   '/:cardId/likes',
@@ -41,7 +41,7 @@ router.put(
       cardId: Joi.string().alphanum().length(24),
     }),
   }),
-  setCardLike,
+  likeCard,
 );
 router.delete(
   '/:cardId/likes',
@@ -50,7 +50,7 @@ router.delete(
       cardId: Joi.string().alphanum().length(24),
     }),
   }),
-  setCardDislike,
+  dislikeCard,
 );
 
 module.exports = router;
