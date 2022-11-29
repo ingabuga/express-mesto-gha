@@ -13,12 +13,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(DB_URL);
-app.use('/', (req, res, next) => {
-  req.user = {
-    _id: '6377d4ed2bec3f253f899062',
-  };
-  next();
-});
+
+// app.use('/', (req, res, next) => {
+//   req.user = {
+//     _id: '6377d4ed2bec3f253f899062',
+//   };
+//   next();
+// });
 
 app.use('/', require('./routers/index'));
 
