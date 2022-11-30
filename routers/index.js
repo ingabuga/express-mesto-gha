@@ -48,7 +48,7 @@ router.use('/users', auth, require('./users'));
 router.use('/cards', auth, require('./cards'));
 
 router.use(errors());
-router.use(() => {
+router.use('/', auth, () => {
   throw new NotFoundError();
 });
 
