@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 const NotFoundError = require('../errors/NotFoundError');
 
 const cardSchema = new mongoose.Schema(
@@ -12,6 +13,9 @@ const cardSchema = new mongoose.Schema(
     link: {
       type: String,
       required: true,
+      validate: {
+        validator: (email) => validator.isURL(email),
+      },
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
