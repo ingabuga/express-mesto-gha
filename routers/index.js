@@ -40,6 +40,10 @@ router.post(
   createUser,
 );
 
+router.get('/signout', (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Выход' });
+});
+
 router.use('/users', auth, require('./users'));
 router.use('/cards', auth, require('./cards'));
 
