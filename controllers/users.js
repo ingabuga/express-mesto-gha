@@ -62,9 +62,22 @@ const updateProfile = (req, res, next) => {
   User.updateUserData(req.user._id, res, next, { name, about });
 };
 
+// const updateAvatar = (req, res, next) => {
+//   const { avatar } = req.body;
+//   User.updateUserData(req.user._id, res, next, { avatar });
+// };
+
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  User.updateUserData(req.user._id, res, next, { avatar });
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+    .then((user) => { res.send(user); })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Данные не корректны'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const login = (req, res, next) => {
