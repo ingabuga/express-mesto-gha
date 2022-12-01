@@ -18,7 +18,7 @@ const createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Некорректные данные карточки'));
+        return next(new BadRequestError('Данные не корректны'));
       }
       return next(err);
     });
@@ -31,11 +31,12 @@ const removeCard = (req, res, next) => {
     })
     .then((card) => {
       const isOwn = card.owner.toString() === req.user._id;
-      if (isOwn) {
-        card.remove();
-        res.send({ data: card });
-      } else {
+      if (!isOwn) {
         throw new ForbiddenError();
+      } else {
+        return card.remove()
+          .then(() => res.send({ data: card }))
+          .catch(next);
       }
     })
     .catch(next);
