@@ -46,28 +46,63 @@ const removeCard = (req, res, next) => {
 //   Card.handleLikeToggle(req, res, next, '$addToSet');
 // };
 
+// const likeCard = (req, res, next) => {
+//   Card.findByIdAndUpdate(
+//     req.params.cardId,
+//     { $addToSet: { likes: req.user._id } },
+//     { new: true },
+//   )
+//     .then((card) => {
+//       if (!card) {
+//         throw new NotFoundError('Карточка не найдена');
+//       }
+//       return res.send({ data: card });
+//     })
+//     .catch((err) => {
+//       if (err.name === 'CastError') {
+//         return next(new BadRequestError('Некорректные данные карточки'));
+//       }
+//       return next(err);
+//     });
+// };
+
+// const dislikeCard = (req, res, next) => {
+//   Card.handleLikeToggle(req, res, next, '$pull');
+// };
+
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
+    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Карточка не найдена');
-      }
-      return res.send({ data: card });
-    })
+    .orFail(() => { throw new NotFoundError('Карточка не найдена'); })
+
+    .then((card) => { res.send({ data: card }); })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new BadRequestError('Некорректные данные карточки'));
+        next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 
 const dislikeCard = (req, res, next) => {
-  Card.handleLikeToggle(req, res, next, '$pull');
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } }, // убрать _id из массива
+    { new: true },
+  )
+    .orFail(() => { throw new NotFoundError('Карточка не найдена'); })
+    .then((card) => { res.send({ data: card }); })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports = {
