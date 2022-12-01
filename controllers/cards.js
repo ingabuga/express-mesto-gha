@@ -24,22 +24,41 @@ const createCard = (req, res, next) => {
     });
 };
 
+// const removeCard = (req, res, next) => {
+//   Card.findById(req.params.cardId)
+//     .orFail(() => {
+//       throw new NotFoundError();
+//     })
+//     .then((card) => {
+//       const isOwn = card.owner.toString() === req.user._id;
+//       if (!isOwn) {
+//         throw new ForbiddenError();
+//       } else {
+//         return card.remove()
+//           .then(() => res.send({ data: card }))
+//           .catch(next);
+//       }
+//     })
+//     .catch(next);
+// };
+
 const removeCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .orFail(() => {
-      throw new NotFoundError();
-    })
     .then((card) => {
-      const isOwn = card.owner.toString() === req.user._id;
-      if (!isOwn) {
-        throw new ForbiddenError();
-      } else {
-        return card.remove()
-          .then(() => res.send({ data: card }))
-          .catch(next);
+      if (!card) {
+        throw new NotFoundError('Карточка не найдена');
       }
+      if (!card.owner.equals(req.user._id)) {
+        throw new ForbiddenError('Нельзя удалять чужую карточку');
+      }
+      return card.remove().then(() => res.send({ data: card }));
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new BadRequestError('Некорректные данные карточки'));
+      }
+      return next(err);
+    });
 };
 
 const likeCard = (req, res, next) => {
