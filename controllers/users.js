@@ -4,6 +4,7 @@ const User = require('../models/user');
 const { CREATED_ERROR, EMAIL_MESSAGE, BAD_REQUEST_MESSAGE } = require('../utils/constants');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
+const DataAccessError = require('../errors/DataAccessError');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -66,21 +67,37 @@ const updateAvatar = (req, res, next) => {
   User.updateUserData(req.user._id, res, next, { avatar });
 };
 
+// const login = (req, res, next) => {
+//   const { email, password } = req.body;
+
+//   User.findUserByCredentials(email, password, next)
+//     .then((user) => {
+//       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+//       res.cookie('jwt', token, { httpOnly: true }).send({
+//         data: {
+//           name: user.name,
+//           about: user.about,
+//           avatar: user.avatar,
+//           email: user.email,
+//           _id: user._id,
+//         },
+//       });
+//     })
+//     .catch(next);
+// };
+
 const login = (req, res, next) => {
   const { email, password } = req.body;
-
-  User.findUserByCredentials(email, password, next)
+  User.findOne({ email })
+    .select('+password')
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', token, { httpOnly: true }).send({
-        data: {
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
-          _id: user._id,
-        },
-      });
+      if (!user) { throw new DataAccessError('Неверный логин или пароль'); }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) { throw new DataAccessError('Неверный логин или пароль'); }
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+          return res.status(200).send({ token });
+        });
     })
     .catch(next);
 };
