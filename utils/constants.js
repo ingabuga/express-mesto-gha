@@ -18,7 +18,7 @@ const ITERNAL_SERVER_MESSAGE = 'Произошла ошибка';
 
 const CREATED_ERROR = 201;
 const AUTH_MESSAGE = 'Нужно авторизоваться';
-const REG_EXP = /^https?:\/\/(www\.)?[\w\d@:%~#=.+-/]+$/;
+const REG_EXP = /(https?:\/\/)([a-zA-Z0-9]+)|(w{3}\.)?([a-zA-Z0-9-]{0,63}\.)([a-zA-Z]{2,4})(\/[\w\-._~:/?#[\]@!$&'()*+,;=]#?)?/;
 
 module.exports = {
   BAD_REQUEST_ERROR,
