@@ -96,40 +96,40 @@ const updateAvatar = (req, res, next) => {
     });
 };
 
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  User.findUserByCredentials(email, password, next)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', token, { httpOnly: true }).send({
-        data: {
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
-          _id: user._id,
-        },
-      });
-    })
-    .catch(next);
-};
-
 // const login = (req, res, next) => {
 //   const { email, password } = req.body;
-//   User.findOne({ email })
-//     .select('+password')
+
+//   User.findUserByCredentials(email, password, next)
 //     .then((user) => {
-//       if (!user) { throw new DataAccessError('Неверный логин или пароль'); }
-//       return bcrypt.compare(password, user.password)
-//         .then((matched) => {
-//           if (!matched) { throw new DataAccessError('Неверный логин или пароль'); }
-//           const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-//           return res.status(200).send({ token });
-//         });
+//       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+//       res.cookie('jwt', token, { httpOnly: true }).send({
+//         data: {
+//           name: user.name,
+//           about: user.about,
+//           avatar: user.avatar,
+//           email: user.email,
+//           _id: user._id,
+//         },
+//       });
 //     })
 //     .catch(next);
 // };
+
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .select('+password')
+    .then((user) => {
+      if (!user) { throw new DataAccessError('Неверный логин или пароль'); }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) { throw new DataAccessError('Неверный логин или пароль'); }
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+          return res.status(200).send({ token });
+        });
+    })
+    .catch(next);
+};
 
 module.exports = {
   login,
