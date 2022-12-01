@@ -1,7 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { CREATED_ERROR } = require('../utils/constants');
+const { CREATED_ERROR, EMAIL_MESSAGE, BAD_REQUEST_MESSAGE } = require('../utils/constants');
+const BadRequestError = require('../errors/BadRequestError');
+const ConflictError = require('../errors/ConflictError');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -43,7 +45,15 @@ const createUser = (req, res, next) => {
         _id: user._id,
       },
     }))
-    .catch(next);
+    .catch((err) => {
+      if (err.code === 11000) {
+        return next(new ConflictError(EMAIL_MESSAGE));
+      }
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError(BAD_REQUEST_MESSAGE));
+      }
+      return next(err);
+    });
 };
 
 const updateProfile = (req, res, next) => {
