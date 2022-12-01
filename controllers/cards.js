@@ -61,8 +61,28 @@ const removeCard = (req, res, next) => {
     });
 };
 
+// const likeCard = (req, res, next) => {
+//   Card.handleLikeToggle(req, res, next, '$addToSet');
+// };
+
 const likeCard = (req, res, next) => {
-  Card.handleLikeToggle(req, res, next, '$addToSet');
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError('Карточка не найдена');
+      }
+      return res.send({ data: card });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new BadRequestError('Некорректные данные карточки'));
+      }
+      return next(err);
+    });
 };
 
 const dislikeCard = (req, res, next) => {
