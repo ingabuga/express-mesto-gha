@@ -2,6 +2,7 @@ const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 const BadRequestError = require('../errors/BadRequestError');
+const DataAccessError = require('../errors/DataAccessError');
 const { CREATED_ERROR } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
@@ -27,19 +28,25 @@ const createCard = (req, res, next) => {
 const removeCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
-      throw new NotFoundError();
+      throw new NotFoundError('Карточка не найдена');
     })
     .then((card) => {
       const isOwn = card.owner.toString() === req.user._id;
       if (!isOwn) {
-        throw new ForbiddenError();
+        throw new ForbiddenError('Нельзя удалить карточку другого пользователя');
       } else {
         return card.remove()
           .then(() => res.send({ data: card }))
           .catch(next);
       }
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new DataAccessError('Переданы некорректные данные для удалении карточки.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // const likeCard = (req, res, next) => {
