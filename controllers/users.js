@@ -4,7 +4,8 @@ const User = require('../models/user');
 const { CREATED_ERROR, EMAIL_MESSAGE, BAD_REQUEST_MESSAGE } = require('../utils/constants');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
-// const DataAccessError = require('../errors/DataAccessError');
+const DataAccessError = require('../errors/DataAccessError');
+const NotFoundError = require('../errors/NotFoundError');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -58,8 +59,23 @@ const createUser = (req, res, next) => {
 };
 
 const updateProfile = (req, res, next) => {
+  // const { name, about } = req.body;
+  // User.updateUserData(req.user._id, res, next, { name, about });
   const { name, about } = req.body;
-  User.updateUserData(req.user._id, res, next, { name, about });
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .orFail(() => {
+      throw new NotFoundError('Пользователь не найден');
+    })
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new DataAccessError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // const updateAvatar = (req, res, next) => {
