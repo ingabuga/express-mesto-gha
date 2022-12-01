@@ -13,12 +13,33 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
+// const getCurrentUser = (req, res, next) => {
+//   User.findUserById(req.user._id, res, next);
+// };
+
 const getCurrentUser = (req, res, next) => {
-  User.findUserById(req.user._id, res, next);
+  User.findById(req.params.userId)
+    .orFail(() => {
+      throw new NotFoundError('Пользователь с таким id не найден');
+    })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new DataAccessError('Неверный запрос или данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
+// const getUser = (req, res, next) => {
+//   User.findUserById(req.params.userId, res, next);
+// };
+
 const getUser = (req, res, next) => {
-  User.findUserById(req.params.userId, res, next);
+  User.findById(req.user._id)
+    .then((user) => res.send(user))
+    .catch(next);
 };
 
 const createUser = (req, res, next) => {
@@ -96,40 +117,40 @@ const updateAvatar = (req, res, next) => {
     });
 };
 
-// const login = (req, res, next) => {
-//   const { email, password } = req.body;
-
-//   User.findUserByCredentials(email, password, next)
-//     .then((user) => {
-//       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-//       res.cookie('jwt', token, { httpOnly: true }).send({
-//         data: {
-//           name: user.name,
-//           about: user.about,
-//           avatar: user.avatar,
-//           email: user.email,
-//           _id: user._id,
-//         },
-//       });
-//     })
-//     .catch(next);
-// };
-
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findOne({ email })
-    .select('+password')
+
+  User.findUserByCredentials(email, password, next)
     .then((user) => {
-      if (!user) { throw new DataAccessError('Неверный логин или пароль'); }
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) { throw new DataAccessError('Неверный логин или пароль'); }
-          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-          return res.status(200).send({ token });
-        });
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.cookie('jwt', token, { httpOnly: true }).send({
+        data: {
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+          _id: user._id,
+        },
+      });
     })
     .catch(next);
 };
+
+// const login = (req, res, next) => {
+//   const { email, password } = req.body;
+//   User.findOne({ email })
+//     .select('+password')
+//     .then((user) => {
+//       if (!user) { throw new DataAccessError('Неверный логин или пароль'); }
+//       return bcrypt.compare(password, user.password)
+//         .then((matched) => {
+//           if (!matched) { throw new DataAccessError('Неверный логин или пароль'); }
+//           const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+//           return res.status(200).send({ token });
+//         });
+//     })
+//     .catch(next);
+// };
 
 module.exports = {
   login,
