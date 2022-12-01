@@ -24,89 +24,30 @@ const createCard = (req, res, next) => {
     });
 };
 
-// const removeCard = (req, res, next) => {
-//   Card.findById(req.params.cardId)
-//     .orFail(() => {
-//       throw new NotFoundError();
-//     })
-//     .then((card) => {
-//       const isOwn = card.owner.toString() === req.user._id;
-//       if (!isOwn) {
-//         throw new ForbiddenError();
-//       } else {
-//         return card.remove()
-//           .then(() => res.send({ data: card }))
-//           .catch(next);
-//       }
-//     })
-//     .catch(next);
-// };
-
 const removeCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Карточка не найдена');
-      }
-      if (!card.owner.equals(req.user._id)) {
-        throw new ForbiddenError('Нельзя удалять чужую карточку');
-      }
-      return card.remove().then(() => res.send({ data: card }));
+    .orFail(() => {
+      throw new NotFoundError();
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Некорректные данные карточки'));
+    .then((card) => {
+      const isOwn = card.owner.toString() === req.user._id;
+      if (!isOwn) {
+        throw new ForbiddenError();
+      } else {
+        return card.remove()
+          .then(() => res.send({ data: card }))
+          .catch(next);
       }
-      return next(err);
-    });
+    })
+    .catch(next);
 };
-
-// const likeCard = (req, res, next) => {
-//   Card.handleLikeToggle(req, res, next, '$addToSet');
-// };
 
 const likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true },
-  )
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Карточка не найдена');
-      }
-      return res.send({ data: card });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Некорректные данные карточки'));
-      }
-      return next(err);
-    });
+  Card.handleLikeToggle(req, res, next, '$addToSet');
 };
 
-// const dislikeCard = (req, res, next) => {
-//   Card.handleLikeToggle(req, res, next, '$pull');
-// };
-
 const dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  )
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Карточка не найдена');
-      }
-      return res.send({ data: card });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Некорректные данные карточки'));
-      }
-      return next(err);
-    });
+  Card.handleLikeToggle(req, res, next, '$pull');
 };
 
 module.exports = {
