@@ -39,7 +39,12 @@ const removeCard = (req, res, next) => {
           .catch(next);
       }
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new BadRequestError('Данные не корректны'));
+      }
+      return next(err);
+    });
 };
 
 const likeCard = (req, res, next) => {
