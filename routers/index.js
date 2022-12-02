@@ -47,7 +47,7 @@ router.get('/signout', (req, res) => {
 router.use('/users', auth, require('./users'));
 router.use('/cards', auth, require('./cards'));
 
-router.use('/', auth, () => {
+router.use(auth, () => {
   throw new NotFoundError();
 });
 
