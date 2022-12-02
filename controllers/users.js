@@ -32,15 +32,15 @@ const getCurrentUser = (req, res, next) => {
     });
 };
 
-const getUser = (req, res, next) => {
-  User.findUserById(req.params.userId, res, next);
-};
-
 // const getUser = (req, res, next) => {
-//   User.findById(req.user._id)
-//     .then((user) => res.send(user))
-//     .catch(next);
+//   User.findUserById(req.params.userId, res, next);
 // };
+
+const getUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => res.send(user))
+    .catch(next);
+};
 
 const createUser = (req, res, next) => {
   const {
