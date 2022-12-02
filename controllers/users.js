@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 // const { CREATED_ERROR, EMAIL_MESSAGE, BAD_REQUEST_MESSAGE } = require('../utils/constants');
 const BadRequestError = require('../errors/BadRequestError');
-const DataAccessError = require('../errors/AuthError');
+const AuthError = require('../errors/AuthError');
 const NotFoundError = require('../errors/NotFoundError');
 const EmailError = require('../errors/EmailError');
 
@@ -35,7 +35,7 @@ const getUser = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new DataAccessError('Неверный запрос или данные'));
+        next(new BadRequestError('Неверный запрос или данные'));
       } else {
         next(err);
       }
@@ -96,7 +96,7 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         next(new EmailError('Пользователь с таким email уже существует'));
       } else if (err.name === 'ValidationError') {
-        next(new DataAccessError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
       }
@@ -116,7 +116,7 @@ const updateProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new DataAccessError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
       }
@@ -136,21 +136,37 @@ const updateAvatar = (req, res, next) => {
     });
 };
 
+// const login = (req, res, next) => {
+//   const { email, password } = req.body;
+
+//   User.findUserByCredentials(email, password, next)
+//     .then((user) => {
+//       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+//       res.cookie('jwt', token, { httpOnly: true }).send({
+//         data: {
+//           name: user.name,
+//           about: user.about,
+//           avatar: user.avatar,
+//           email: user.email,
+//           _id: user._id,
+//         },
+//       });
+//     })
+//     .catch(next);
+// };
+
 const login = (req, res, next) => {
   const { email, password } = req.body;
-
-  User.findUserByCredentials(email, password, next)
+  User.findOne({ email })
+    .select('+password')
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', token, { httpOnly: true }).send({
-        data: {
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
-          _id: user._id,
-        },
-      });
+      if (!user) { throw new AuthError('Неверный логин или пароль'); }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) { throw new AuthError('Неверный логин или пароль'); }
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+          return res.status(200).send({ token });
+        });
     })
     .catch(next);
 };
