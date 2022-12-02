@@ -13,19 +13,11 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-// const getCurrentUser = (req, res, next) => {
-//   User.findUserById(req.user._id, res, next);
-// };
-
 const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => res.send(user))
     .catch(next);
 };
-
-// const getUser = (req, res, next) => {
-//   User.findUserById(req.params.userId, res, next);
-// };
 
 const getUser = (req, res, next) => {
   User.findById(req.params.userId)
@@ -100,20 +92,28 @@ const createUser = (req, res, next) => {
       delete newUser.password;
       res.send(newUser);
     })
+    // .catch((err) => {
+    //   if (err.code === 11000) {
+    //     next(new EmailError('Пользователь с таким email уже существует'));
+    //   } else if (err.name === 'ValidationError') {
+    //     next(new BadRequestError('Переданы некорректные данные'));
+    //   } else {
+    //     next(err);
+    //   }
+    // });
+
     .catch((err) => {
       if (err.code === 11000) {
-        next(new EmailError('Пользователь с таким email уже существует'));
-      } else if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-      } else {
-        next(err);
+        return next(new EmailError('Пользователь с таким email уже существует'));
       }
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError('Переданы некорректные данные'));
+      }
+      return next(err);
     });
 };
 
 const updateProfile = (req, res, next) => {
-  // const { name, about } = req.body;
-  // User.updateUserData(req.user._id, res, next, { name, about });
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(() => {
