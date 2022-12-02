@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const AuthError = require('../errors/AuthError');
-// const NotFoundError = require('../errors/NotFoundError');
 
 const userSchema = new mongoose.Schema(
   {
@@ -55,22 +54,6 @@ const userSchema = new mongoose.Schema(
               return user;
             }));
       },
-      // findUserById(id, res, next) {
-      //   return this.findById(id)
-      //     .orFail(() => {
-      //       throw new NotFoundError();
-      //     })
-      //     .then((user) => res.send({ data: user }))
-      //     .catch(next);
-      // },
-      // updateUserData(id, res, next, params) {
-      //   return this.findByIdAndUpdate(id, params, { new: true, runValidators: true })
-      //     .orFail(() => {
-      //       throw new NotFoundError();
-      //     })
-      //     .then((user) => res.send({ data: user }))
-      //     .catch(next);
-      // },
     },
   },
 );
