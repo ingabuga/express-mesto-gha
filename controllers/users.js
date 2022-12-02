@@ -81,11 +81,19 @@ const getUser = (req, res, next) => {
 
 const createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    name,
+    about,
+    avatar,
+    password,
+    email,
   } = req.body;
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
     }))
     .then((user) => {
       const newUser = user.toObject();
@@ -154,22 +162,6 @@ const login = (req, res, next) => {
     })
     .catch(next);
 };
-
-// const login = (req, res, next) => {
-//   const { email, password } = req.body;
-//   User.findOne({ email })
-//     .select('+password')
-//     .then((user) => {
-//       if (!user) { throw new AuthError('Неверный логин или пароль'); }
-//       return bcrypt.compare(password, user.password)
-//         .then((matched) => {
-//           if (!matched) { throw new AuthError('Неверный логин или пароль'); }
-//           const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-//           return res.status(200).send({ token });
-//         });
-//     })
-//     .catch(next);
-// };
 
 module.exports = {
   login,
