@@ -18,6 +18,16 @@ const getUsers = (req, res, next) => {
 // };
 
 const getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => res.send(user))
+    .catch(next);
+};
+
+// const getUser = (req, res, next) => {
+//   User.findUserById(req.params.userId, res, next);
+// };
+
+const getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
       throw new NotFoundError('Пользователь с таким id не найден');
@@ -30,16 +40,6 @@ const getCurrentUser = (req, res, next) => {
         next(err);
       }
     });
-};
-
-// const getUser = (req, res, next) => {
-//   User.findUserById(req.params.userId, res, next);
-// };
-
-const getUser = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => res.send(user))
-    .catch(next);
 };
 
 const createUser = (req, res, next) => {
