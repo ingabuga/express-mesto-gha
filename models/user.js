@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const validator = require('validator');
-const DataAccessError = require('../errors/AuthError');
+const AuthError = require('../errors/AuthError');
 const NotFoundError = require('../errors/NotFoundError');
 
 const userSchema = new mongoose.Schema(
@@ -45,12 +45,12 @@ const userSchema = new mongoose.Schema(
       findUserByCredentials(email, password) {
         return this.findOne({ email }).select('+password')
           .orFail(() => {
-            throw new DataAccessError();
+            throw new AuthError();
           })
           .then((user) => bcrypt.compare(password, user.password)
             .then((matched) => {
               if (!matched) {
-                throw new DataAccessError();
+                throw new AuthError();
               }
               return user;
             }));
