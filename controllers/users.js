@@ -13,24 +13,24 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-const getCurrentUser = (req, res, next) => {
-  User.findUserById(req.user._id, res, next);
-};
-
 // const getCurrentUser = (req, res, next) => {
-//   User.findById(req.params.userId)
-//     .orFail(() => {
-//       throw new NotFoundError('Пользователь с таким id не найден');
-//     })
-//     .then((user) => res.send(user))
-//     .catch((err) => {
-//       if (err.name === 'ValidationError' || err.name === 'CastError') {
-//         next(new DataAccessError('Неверный запрос или данные'));
-//       } else {
-//         next(err);
-//       }
-//     });
+//   User.findUserById(req.user._id, res, next);
 // };
+
+const getCurrentUser = (req, res, next) => {
+  User.findById(req.params.userId)
+    .orFail(() => {
+      throw new NotFoundError('Пользователь с таким id не найден');
+    })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new DataAccessError('Неверный запрос или данные'));
+      } else {
+        next(err);
+      }
+    });
+};
 
 const getUser = (req, res, next) => {
   User.findUserById(req.params.userId, res, next);
