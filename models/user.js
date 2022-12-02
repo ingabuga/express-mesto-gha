@@ -1,8 +1,5 @@
-const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const validator = require('validator');
-const AuthError = require('../errors/AuthError');
-// const NotFoundError = require('../errors/NotFoundError');
 
 const userSchema = new mongoose.Schema(
   {
@@ -38,39 +35,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       select: false,
-    },
-  },
-  {
-    statics: {
-      findUserByCredentials(email, password) {
-        return this.findOne({ email }).select('+password')
-          .orFail(() => {
-            throw new AuthError();
-          })
-          .then((user) => bcrypt.compare(password, user.password)
-            .then((matched) => {
-              if (!matched) {
-                throw new AuthError();
-              }
-              return user;
-            }));
-      },
-      // findUserById(id, res, next) {
-      //   return this.findById(id)
-      //     .orFail(() => {
-      //       throw new NotFoundError();
-      //     })
-      //     .then((user) => res.send({ data: user }))
-      //     .catch(next);
-      // },
-      // updateUserData(id, res, next, params) {
-      //   return this.findByIdAndUpdate(id, params, { new: true, runValidators: true })
-      //     .orFail(() => {
-      //       throw new NotFoundError();
-      //     })
-      //     .then((user) => res.send({ data: user }))
-      //     .catch(next);
-      // },
     },
   },
 );
