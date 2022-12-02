@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 // const { CREATED_ERROR, EMAIL_MESSAGE, BAD_REQUEST_MESSAGE } = require('../utils/constants');
 const BadRequestError = require('../errors/BadRequestError');
-const DataAccessError = require('../errors/DataAccessError');
+const DataAccessError = require('../errors/AuthError');
 const NotFoundError = require('../errors/NotFoundError');
 const EmailError = require('../errors/EmailError');
 

@@ -2,7 +2,7 @@ const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 const BadRequestError = require('../errors/BadRequestError');
-const DataAccessError = require('../errors/DataAccessError');
+const AuthError = require('../errors/AuthError');
 const { CREATED_ERROR } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
@@ -42,7 +42,7 @@ const removeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new DataAccessError('Переданы некорректные данные для удалении карточки.'));
+        next(new AuthError('Переданы некорректные данные для удалении карточки.'));
       } else {
         next(err);
       }
