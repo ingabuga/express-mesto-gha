@@ -49,38 +49,10 @@ const removeCard = (req, res, next) => {
     });
 };
 
-// const likeCard = (req, res, next) => {
-//   Card.handleLikeToggle(req, res, next, '$addToSet');
-// };
-
-// const likeCard = (req, res, next) => {
-//   Card.findByIdAndUpdate(
-//     req.params.cardId,
-//     { $addToSet: { likes: req.user._id } },
-//     { new: true },
-//   )
-//     .then((card) => {
-//       if (!card) {
-//         throw new NotFoundError('Карточка не найдена');
-//       }
-//       return res.send({ data: card });
-//     })
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         return next(new BadRequestError('Некорректные данные карточки'));
-//       }
-//       return next(err);
-//     });
-// };
-
-// const dislikeCard = (req, res, next) => {
-//   Card.handleLikeToggle(req, res, next, '$pull');
-// };
-
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { $addToSet: { likes: req.user._id } },
     { new: true },
   )
     .orFail(() => { throw new NotFoundError('Карточка не найдена'); })
@@ -98,7 +70,7 @@ const likeCard = (req, res, next) => {
 const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
+    { $pull: { likes: req.user._id } },
     { new: true },
   )
     .orFail(() => { throw new NotFoundError('Карточка не найдена'); })
