@@ -13,15 +13,15 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-const getCurrentUser = (req, res, next) => {
-  User.findUserById(req.user._id, res, next);
-};
-
 // const getCurrentUser = (req, res, next) => {
-//   User.findById(req.user._id)
-//     .then((user) => res.send(user))
-//     .catch(next);
+//   User.findUserById(req.user._id, res, next);
 // };
+
+const getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => res.send(user))
+    .catch(next);
+};
 
 // const getUser = (req, res, next) => {
 //   User.findUserById(req.params.userId, res, next);
