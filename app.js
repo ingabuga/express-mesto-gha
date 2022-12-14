@@ -1,38 +1,40 @@
-require('dotenv').config();
 const express = require('express');
-const helmet = require('helmet');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
+require('dotenv').config();
 const cors = require('cors');
+const mongoose = require('mongoose');
+mongoose.set('strictQuery', true);
 const { errors } = require('celebrate');
+const cookieParser = require('cookie-parser');
+const {
+  DEFAULT_ERROR_CODE,
+  DEFAULT_ERROR_MESSAGE,
+  CORS_CONFIG,
+} = require('./utils/constants');
+const { errorLogger } = require('./middlewares/logger');
 
-const { requestLogger, errorLogger } = require('./middlewares/logger');
-const routes = require('./routes/routes');
-const { CORS_OPTIONS } = require('./config/config');
-const { handleErrors } = require('./helpers/errors-handler');
-
-// Слушаем 3000 порт
-const { PORT = 3001 } = process.env;
+const { PORT = 3001, DB_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
 
 const app = express();
-app.use(helmet());
 
-app.use('*', cors(CORS_OPTIONS));
+app.use('*', cors(CORS_CONFIG));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-mongoose.connect('mongodb://localhost:27017/mestodb', {
-  useNewUrlParser: true,
-});
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(requestLogger);
-app.use('/', routes);
+mongoose.connect(DB_URL);
+
+app.use('/', require('./routers/index'));
+
 app.use(errorLogger);
-
 app.use(errors());
-app.use(handleErrors);
+app.use((err, req, res, next) => {
+  if (err.statusCode) {
+    res.status(err.statusCode).send({ message: err.message });
+  } else {
+    res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
+  }
+});
 
 app.listen(PORT);

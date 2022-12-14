@@ -1,80 +1,73 @@
 const Card = require('../models/card');
-const { OK, CREATED } = require('../config/config');
+const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
+const { CREATED_CODE } = require('../utils/constants');
+const { handleError } = require('../utils/utils');
 
-const NotFoundError = require('../middlewares/errors/not-found-error');
-const BadRequestError = require('../middlewares/errors/bad-request-error');
-const ForbiddenError = require('../middlewares/errors/forbidden-error');
-
-module.exports.getCards = (req, res, next) => {
+const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.status(OK).send(cards))
-    .catch(next);
+    .populate(['owner', 'likes'])
+    .then((cards) => res.send(cards))
+    .catch((err) => handleError(err, next));
 };
 
-module.exports.createCard = (req, res, next) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
-  Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(CREATED).send(card))
-    .catch((err) => next(err));
+  Card.create({ name, link, owner: req.user._id }, (err, newCard) => {
+    if (err) {
+      handleError(err, next);
+      return;
+    }
+    Card.findById(newCard._id)
+      .populate(['owner', 'likes'])
+      .then((card) => res.status(CREATED_CODE).send(card))
+      .catch((e) => handleError(e, next));
+  });
 };
 
-module.exports.deleteCard = (req, res, next) => {
+const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
-      throw new NotFoundError('Запрашиваемая карточка не найдена');
+      throw new NotFoundError();
     })
     .then((card) => {
-      if (req.user._id !== card.owner._id.toString()) {
-        throw new ForbiddenError('Можно удалять только свои карточки');
+      if (card.owner.toString() === req.user._id) {
+        card.remove()
+          .then(() => res.send(card));
       } else {
-        return card.remove();
+        throw new ForbiddenError();
       }
     })
-    .then(() => res.status(OK).send({ message: 'Пост удален' }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Передан невалидный id карточки'));
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => handleError(err, next));
 };
 
-module.exports.likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
+function handleLikeToggle(model, req, res, next, action) {
+  return model.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true },
+    { [action]: { likes: req.user._id } },
+    { new: true, runValidators: true },
   )
     .orFail(() => {
-      throw new NotFoundError('Запрашиваемая карточка не найдена');
+      throw new NotFoundError();
     })
-    .then((card) => res.status(OK).send(card))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Передан невалидный id карточки'));
-      } else {
-        next(err);
-      }
-    });
+    .populate(['owner', 'likes'])
+    .then((card) => res.send(card))
+    .catch((err) => handleError(err, next));
+}
+
+const setCardLike = (req, res, next) => {
+  handleLikeToggle(Card, req, res, next, '$addToSet');
 };
 
-module.exports.dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true },
-  )
-    .orFail(() => {
-      throw new NotFoundError('Запрашиваемая карточка не найдена');
-    })
-    .then((card) => res.status(OK).send(card))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Передан невалидный id карточки'));
-      } else {
-        next(err);
-      }
-    });
+const setCardDislike = (req, res, next) => {
+  handleLikeToggle(Card, req, res, next, '$pull');
+};
+
+module.exports = {
+  getCards,
+  createCard,
+  deleteCard,
+  setCardLike,
+  setCardDislike,
 };
