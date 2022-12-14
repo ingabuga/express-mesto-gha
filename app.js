@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const mongoose = require('mongoose');
+
 mongoose.set('strictQuery', true);
 const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
