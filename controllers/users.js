@@ -6,14 +6,14 @@ const NotFoundError = require('../errors/NotFoundError');
 const { CREATED_CODE, LOGOUT_MESSAGE } = require('../utils/constants');
 const { handleError } = require('../utils/utils');
 
-const { NODE_ENV = 'development', JWT_KEY = 'some-secret-key' } = process.env;
+const { NODE_ENV = 'development' } = process.env;
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_KEY, { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.cookie('jwt', token, {
         httpOnly: true,
         secure: NODE_ENV === 'production',
