@@ -1,49 +1,38 @@
-const BAD_REQUEST_CODE = 400;
+const BAD_REQUEST_ERROR = 400;
+const BAD_REQUEST_MESSAGE = 'Данные не корректны';
 
-const WRONG_LOGIN_CODE = 401;
+const UNAUTHORIZED_ERROR = 401;
+const UNAUTHORIZED_MESSAGE = 'Неправильные логин и пароль';
 
-const FORBIDDEN_CODE = 403;
-
-const NOT_FOUND_CODE = 404;
-
-const EMAIL_CONFLICT_CODE = 409;
-
-const DEFAULT_ERROR_CODE = 500;
-
-const CREATED_CODE = 201;
-
-const BAD_REQUEST_MESSAGE = 'Некорректные данные';
-
-const NOT_FOUND_MESSAGE = 'Данные не найдены';
-
-const WRONG_LOGIN_MESSAGE = 'Неправильные почта или пароль';
-
-const NEED_AUTH_MESSAGE = 'Необходима авторизация';
-
-const EMAIL_CONFLICT_MESSAGE = 'Такой email уже зарегистрирован';
-
+const FORBIDDEN_ERROR = 403;
 const FORBIDDEN_MESSAGE = 'Ошибка доступа';
 
+const PAGE_NOT_FOUND_ERROR = 404;
+const PAGE_NOT_FOUND_MESSAGE = 'Данные не найдены';
+
+const EMAIL_ERROR = 409;
+const EMAIL_MESSAGE = 'Этот email уже зарегистрирован';
+
+const DEFAULT_ERROR_ERROR = 500;
 const DEFAULT_ERROR_MESSAGE = 'Произошла ошибка';
 
-const LOGOUT_MESSAGE = 'Выход из аккаунта успешно выполнен';
+const CREATED_CODE = 201;
+const AUTH_MESSAGE = 'Нужно авторизоваться';
 
+const LOGOUT_MESSAGE = 'Выход из аккаунта выполнен';
 const DEFAULT_USER_NAME = 'Жак-Ив Кусто';
-
 const DEFAULT_USER_ABOUT = 'Исследователь';
-
 const DEFAULT_AVATAR_LINK = 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png';
-
-const LINK_REG_EXP = /^https?:\/\/(www\.)?[\w\d@:%~#=.+-/]+$/;
+const REG_EXP = /(https?:\/\/)([a-zA-Z0-9]+)|(w{3}\.)?([a-zA-Z0-9-]{0,63}\.)([a-zA-Z]{2,4})(\/[\w\-._~:/?#[\]@!$&'()*+,;=]#?)?/;
 
 const ORIGINS = [
   'http://localhost:3001',
   'http://localhost:3000',
-  'http://nameless.nomoredomains.club',
-  'https://nameless.nomoredomains.club',
+  'http://ingabuga.nomoredomains.club',
+  'https://ingabuga.nomoredomains.club',
 ];
 
-const CORS_CONFIG = {
+const CORS_DATA = {
   origin: ORIGINS,
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
@@ -53,24 +42,24 @@ const CORS_CONFIG = {
 };
 
 module.exports = {
-  BAD_REQUEST_CODE,
-  NOT_FOUND_CODE,
-  WRONG_LOGIN_CODE,
-  DEFAULT_ERROR_CODE,
-  EMAIL_CONFLICT_CODE,
-  FORBIDDEN_CODE,
+  BAD_REQUEST_ERROR,
+  PAGE_NOT_FOUND_ERROR,
+  UNAUTHORIZED_ERROR,
+  DEFAULT_ERROR_ERROR,
+  EMAIL_ERROR,
+  FORBIDDEN_ERROR,
   CREATED_CODE,
   BAD_REQUEST_MESSAGE,
-  NOT_FOUND_MESSAGE,
-  WRONG_LOGIN_MESSAGE,
-  NEED_AUTH_MESSAGE,
-  EMAIL_CONFLICT_MESSAGE,
+  PAGE_NOT_FOUND_MESSAGE,
+  UNAUTHORIZED_MESSAGE,
+  AUTH_MESSAGE,
+  EMAIL_MESSAGE,
   FORBIDDEN_MESSAGE,
   DEFAULT_ERROR_MESSAGE,
   LOGOUT_MESSAGE,
   DEFAULT_USER_NAME,
   DEFAULT_USER_ABOUT,
   DEFAULT_AVATAR_LINK,
-  LINK_REG_EXP,
-  CORS_CONFIG,
+  REG_EXP,
+  CORS_DATA,
 };

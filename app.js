@@ -2,10 +2,10 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 
 mongoose.set('strictQuery', true);
 const { errors } = require('celebrate');
-const cookieParser = require('cookie-parser');
 const {
   DEFAULT_ERROR_CODE,
   DEFAULT_ERROR_MESSAGE,
@@ -13,7 +13,7 @@ const {
 } = require('./utils/constants');
 const { errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3001, DB_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
+const { PORT = 3001 } = process.env;
 
 const app = express();
 
@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect(DB_URL);
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use('/', require('./routers/index'));
 
