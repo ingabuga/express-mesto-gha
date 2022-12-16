@@ -3,21 +3,21 @@ require('dotenv').config();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 
 mongoose.set('strictQuery', true);
-const { errors } = require('celebrate');
 const {
   DEFAULT_ERROR_CODE,
   DEFAULT_ERROR_MESSAGE,
-  CORS_CONFIG,
+  CORS_DATA,
 } = require('./utils/constants');
 const { errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3001 } = process.env;
+const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use('*', cors(CORS_CONFIG));
+app.use('*', cors(CORS_DATA));
 
 app.use(cookieParser());
 
